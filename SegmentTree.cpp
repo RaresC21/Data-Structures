@@ -1,3 +1,18 @@
+/*
+Segment Tree. 
+Build. Query. Update.
+
+Given an array of integers, answers queries to find sum of entries in a given range in O(LogN) time. 
+Builds the tree in O(NLogN) time. Also allows for updates. i.e. adding a particular value to a given entry. 
+This is also done in O(LongN) time.
+
+Lazy Implementation of Segment Tree.
+Allows for updating an entire range of values, not a single element. 
+This only makes the minimum amount of operations needed, and traverses down the tree only when we have a query 
+explicitly demanding us to do so.
+*/
+
+
 #define MAX 100 // This can change depending on input size
 
 class SegTree {
