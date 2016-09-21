@@ -1,3 +1,8 @@
+/*
+Header file with all of the necessary packages. 
+Also contains certain Macros and typedefs to make life easier
+*/
+
 #include <algorithm>
 #include <iostream>
 #include <string.h>
