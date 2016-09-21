@@ -1,3 +1,8 @@
+/*
+Allows for lookup of a particular string out of a large text for example. 
+Runs in time proportional to the length of the string being looked up.
+*/
+
 class Trie {
 
 	// Trie - Data structure of type Tree
