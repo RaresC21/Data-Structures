@@ -1,7 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <algorithm>
+#include <bits/std.c++.h>
 using namespace std;
 
 typedef long long int lli;
@@ -36,16 +33,16 @@ struct Segtree2d {
 			T[node] = S[node] = P[a1][b1];
 			return;
 		}
-		
+
         // split the tree into four segments
         T[node] = -INF;
 		build(4 * node - 2, a1, b1, (a1 + a2) / 2, (b1 + b2) / 2 );
 		build(4 * node - 1, (a1 + a2) / 2 + 1, b1, a2, (b1 + b2) / 2);
 		build(4 * node + 0, a1, (b1 + b2) / 2 + 1, (a1 + a2) / 2, b2);
 		build(4 * node + 1, (a1 + a2) / 2 + 1, (b1 + b2) / 2 + 1, a2, b2);
-        
+
 		T[node] = max (T[4*node - 2], max (T[4*node - 1], max (T[4*node + 0], T[4*node + 1])));
-        S[node] = S[4*node - 2] + S[4*node - 1] + S[4*node + 0] + S[4*node + 1];				
+        S[node] = S[4*node - 2] + S[4*node - 1] + S[4*node + 0] + S[4*node + 1];
     }
 
     // helper function for query(int, int, int, int);
@@ -65,7 +62,7 @@ struct Segtree2d {
         p2 = query(4 * node - 1, (a1 + a2) / 2 + 1, b1, a2, (b1 + b2) / 2, x1, y1, x2, y2);
         p3 = query(4 * node + 0, a1, (b1 + b2) / 2 + 1, (a1 + a2) / 2, b2, x1, y1, x2, y2);
         p4 = query(4 * node + 1, (a1 + a2) / 2 + 1, (b1 + b2) / 2 + 1, a2, b2, x1, y1, x2, y2);
-		
+
 		mx = max (p1.first, max (p2.first, max (p3.first, p4.first)));
         return make_pair(mx,  p1.second + p2.second + p3.second + p4.second );
     }
