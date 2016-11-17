@@ -1,3 +1,12 @@
+/*
+from hackerearth
+two operations:
+    1 L x - update Lth character of string to x
+    2 L R - find if all the character of string from index L to R can be
+            rearranged such that they can form a palindrome.
+            If they can print "yes", else print "no".
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
