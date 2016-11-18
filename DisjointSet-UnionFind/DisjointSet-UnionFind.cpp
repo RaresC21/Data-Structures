@@ -34,6 +34,11 @@ void merge_set (int a, int b) {
         rank_[root_b]++;
 }
 
+int get_set_size (int a) {
+    int root = find_set(a);
+    return set_size[root];
+}
+
 // ------------ END OF DATA STRUCTURE -------------
 
 
