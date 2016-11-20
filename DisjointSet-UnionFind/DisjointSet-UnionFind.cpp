@@ -22,6 +22,8 @@ void merge_set (int a, int b) {
     int root_a = find_set (a);
     int root_b = find_set (b);
 
+    if (root_a == root_b) return;
+
     if (rank_[root_a] > rank_[root_b]) {
         parent[root_b] = root_a;
         set_size[root_a] += set_size[root_b];
