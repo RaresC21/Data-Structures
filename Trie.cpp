@@ -7,7 +7,7 @@ private:
     struct node {
         bool is_end;
         struct node* child[ALPHAHBET_SIZE];
-    }*front, *behind;
+    }*front;
 
     bool search(string word, node* n) {
         node * current = n;
