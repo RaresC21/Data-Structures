@@ -49,7 +49,7 @@ void LinkedList::insert_at_head(int item) {
 
 void LinkedList::delete_element(int item) {
     if (head == NULL) return;
-    Node* cur = head, *prev = NULL;
+    Node *cur = head, *prev = NULL;
     while (cur->next && cur->data != item) {
         prev = cur;
         cur = cur->next;
