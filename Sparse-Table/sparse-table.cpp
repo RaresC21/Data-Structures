@@ -9,14 +9,14 @@ vector<int> a;
 
 void sparse_table() {
     two[1] = 0;
-    FOR(i,2,2*N) {
+    FOR(i,2,N) {
         two[i] = two[i / 2] + 1;
     }
-    FOR(i,0,2*N) {
+    FOR(i,0,N) {
         maxim[i][0] = a[i];
     }
     FOR(i,1,24) {
-        for (int j = 0; j + (1 << i) < 2*N; j++) {
+        for (int j = 0; j + (1 << i) < N; j++) {
             maxim[j][i] = max(maxim[j][i - 1], maxim[j + (1 << (i - 1))][i - 1]);
         }
     }
