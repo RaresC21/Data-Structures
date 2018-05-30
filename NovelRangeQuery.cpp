@@ -5,21 +5,10 @@
 template<class T>
 class RangeQuery {
 public:
-  int n;
-  T ZERO;
-  std::vector<T> A[2];
-  std::vector<int> log_;
-  std::vector<std::vector<T>> column[2];
-  std::vector<std::vector<T>> paths[2];
-  std::vector<std::vector<int>> path_length[2];
-  T (*merge)(T, T);
-  RangeQuery(const std::vector<T>& A,
-             T (*merge)(T, T),
-             T zero) : merge(merge), ZERO(zero) {
-    n = A.size();
-    int nn = 1; while (nn < n) nn *= 2;
-    n = nn;
-
+  RangeQuery(const std::vector<T>& A, T (*merge)(T, T), T zero) :
+                                  merge(merge),
+                                  ZERO(zero) {
+    n = next_power(A.size());
     log_ = std::vector<int>(n + 1);
     log_table(n);
 
@@ -35,21 +24,27 @@ public:
     path_length[0] = path_length[1] = std::vector<std::vector<int>>(
                                             n,
                                             std::vector<int>(log_[n] + 1, 0));
-
     create_tree();
     compute_paths();
   }
 
-  ~RangeQuery() {}
-
-  T query(int L, int R);
-  int get_log(int x) { return log_[x]; }
+  T query(int L, int R);  // O(1)
 
 private:
-  void create_tree();
-  void compute_paths();
+  int n;
+  T ZERO;
+  std::vector<T> A[2];
+  std::vector<int> log_;
+  std::vector<std::vector<T>> column[2];
+  std::vector<std::vector<T>> paths[2];
+  std::vector<std::vector<int>> path_length[2];
+  T (*merge)(T, T);
 
-  void log_table(int max);
+  void create_tree(); // O(n)
+  void compute_paths(); // O(n log n)
+
+  void log_table(int max); // O(n)
+  int next_power(int n); // O(log n)
 };
 
 template<class T>
@@ -88,15 +83,16 @@ T RangeQuery<T>::query(int L, int R) {
 
 template<class T>
 void RangeQuery<T>::create_tree() {
-  for (int t = 0; t <= 1; t++)
-  for (int len = 1; len <= n; len *= 2) {
-    for (int c = 0; c < n; c += len) {
-      if (len == 1) {
-        column[t][c].push_back(A[t][c]);
-      } else {
-        T left_child = column[t][c].back();
-        T right_child = column[t][c + len/2].back();
-        column[t][c].push_back(merge(left_child, right_child));
+  for (int t = 0; t <= 1; t++) {
+    for (int len = 1; len <= n; len *= 2) {
+      for (int c = 0; c < n; c += len) {
+        if (len == 1) {
+          column[t][c].push_back(A[t][c]);
+        } else {
+          T left_child = column[t][c].back();
+          T right_child = column[t][c + len/2].back();
+          column[t][c].push_back(merge(left_child, right_child));
+        }
       }
     }
   }
@@ -104,41 +100,43 @@ void RangeQuery<T>::create_tree() {
 
 template<class T>
 void RangeQuery<T>::compute_paths() {
-  for (int t = 0; t <= 1; t++)
-  for (int c = 0; c < n; c++) {
-    T cur_val = ZERO;
-    int cur_length = 0;
-    int last_len = -1;
+  for (int t = 0; t <= 1; t++) {
+    for (int c = 0; c < n; c++) {
+      T cur_val = ZERO;
+      int cur_length = 0;
+      int last_len = -1;
 
-    int pos = c;
-    do {
-      cur_val = merge(cur_val, column[t][pos].back());
+      int pos = c;
+      do {
+        cur_val = merge(cur_val, column[t][pos].back());
 
-      int len = column[t][pos].size() - 1;
+        int len = column[t][pos].size() - 1;
+        int i = last_len + 1;
+        cur_length += (1 << len);
+
+        if (last_len != -1) {
+          while (i != len) {
+            paths[t][c][i] = paths[t][c][last_len];
+            path_length[t][c][i] = path_length[t][c][last_len];
+            i++;
+          }
+        }
+        paths[t][c][len] = cur_val;
+        path_length[t][c][len] = cur_length;
+        last_len = len;
+
+        pos += (1 << len);
+      } while (pos < n);
+
       int i = last_len + 1;
-      cur_length += (1 << len);
-
       if (last_len != -1) {
-        while (i != len) {
+        while (i < paths[t][c].size()) {
           paths[t][c][i] = paths[t][c][last_len];
           path_length[t][c][i] = path_length[t][c][last_len];
           i++;
         }
       }
-      paths[t][c][len] = cur_val;
-      path_length[t][c][len] = cur_length;
-      last_len = len;
-
-      pos += (1 << len);
-    } while (pos < n);
-
-    int i = last_len + 1;
-    if (last_len != -1)
-      while (i < paths[t][c].size()) {
-        paths[t][c][i] = paths[t][c][last_len];
-        path_length[t][c][i] = path_length[t][c][last_len];
-        i++;
-      }
+    }
   }
 }
 
@@ -153,4 +151,11 @@ void RangeQuery<T>::log_table(int max) {
     }
     log_[i] = val;
   }
+}
+
+template<class T>
+int RangeQuery<T>::next_power(int n) {
+  int nn = 1;
+  while (nn < n) nn *= 2;
+  return nn;
 }
