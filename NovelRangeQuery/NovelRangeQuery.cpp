@@ -1,29 +1,27 @@
 #include <vector>
 #include <math.h>
+#include <algorithm>
 #include <iostream>
 
 template<class T>
 class RangeQuery {
 public:
-  RangeQuery(const std::vector<T>& A, T (*merge)(T, T), T zero) :
-                                  merge(merge),
-                                  ZERO(zero) {
+  RangeQuery(const std::vector<T>& A, T (*merge)(T, T), T zero) : merge(merge),
+								  ZERO(zero) {
     n = next_power(A.size());
     log_ = std::vector<int>(n + 1);
     log_table(n);
-
+    
     this->A[0] = std::vector<T>(n, ZERO);
     for (int i = 0; i < A.size(); i++) this->A[0][i] = A[i];
     this->A[1] = this->A[0];
     std::reverse(this->A[1].begin(), this->A[1].end());
-
+    
     column[0] = column[1] = std::vector<std::vector<T>>(n, std::vector<T>());
-    paths[0] = paths[1] = std::vector<std::vector<T>>(
-                                            n,
-                                            std::vector<T>(log_[n] + 1, ZERO));
-    path_length[0] = path_length[1] = std::vector<std::vector<int>>(
-                                            n,
-                                            std::vector<int>(log_[n] + 1, 0));
+    paths[0] = paths[1] = std::vector<std::vector<T>>
+      (n, std::vector<T>(log_[n] + 1, ZERO));
+    path_length[0] = path_length[1] = std::vector<std::vector<int>>
+      (n, std::vector<int>(log_[n] + 1, 0));
     create_tree();
     compute_paths();
   }
